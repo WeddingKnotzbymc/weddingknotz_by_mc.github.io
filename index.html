@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WeddingKnotz by MC - Wedding Photography</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+  <!-- Ionicons -->
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+  <!-- Tailwind Theme Ext -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            beige: '#FDF5EC',
+            gold: '#B89A6B',
+            'gold-dark': '#9c815a'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Playfair Display', 'serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root { --leaf-size-min: 20px; --leaf-size-max: 56px; }
+    body { background-color: #FDF5EC; color: #333; }
+
+    /* Blurred floating leaves background */
+    .leaves-bg { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; filter: blur(2px); opacity: .25; }
+    .leaf { position: absolute; width: clamp(var(--leaf-size-min), 5vw, var(--leaf-size-max)); aspect-ratio: 1/1; background: radial-gradient(ellipse at 30% 30%, #c9b18f 0%, #b89a6b 40%, #9c815a 100%); -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><path d=%22M50 2c14 8 36 18 46 40-6 26-26 46-46 56C30 88 10 68 4 42 14 20 36 10 50 2z%22/></svg>') center/contain no-repeat; mask: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><path d=%22M50 2c14 8 36 18 46 40-6 26-26 46-46 56C30 88 10 68 4 42 14 20 36 10 50 2z%22/></svg>') center/contain no-repeat; opacity: .7; animation: floatY linear infinite, sway ease-in-out infinite, spin linear infinite; }
+    @keyframes floatY { 0% { transform: translate3d(var(--x,0px), -10vh, 0) rotate(0deg);} 100%{ transform: translate3d(calc(var(--x,0px) + var(--drift,0px)), 110vh, 0) rotate(360deg);} }
+    @keyframes sway { 50% { filter: blur(3px);} }
+    @keyframes spin { 100% { rotate: 1turn; } }
+
+    /* Hero slideshow */
+    #hero-slideshow { position: relative; height: 85vh; width: 100%; background-color: #e2e8f0; }
+    .slide { position: absolute; inset: 0; background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0; transition: opacity 1.5s ease-in-out; z-index: 1; }
+    .slide.active { opacity: 1; z-index: 2; }
+    .slide-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,.45), rgba(0,0,0,.35)); z-index: 3; }
+    #hero-content { position: absolute; inset: 0; z-index: 4; }
+
+    /* Modal transitions */
+    .modal { transition: opacity .3s ease, visibility .3s ease; }
+    .modal-content { transition: transform .3s ease; }
+
+    .card-hover { transform: translateY(0); transition: transform .3s ease, box-shadow .3s ease; }
+    .card-hover:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,.08); }
+
+    /* Owner edit button */
+    .edit-btn { position:absolute; top:.5rem; right:.5rem; background: rgba(0,0,0,.55); color:#fff; font-size:.75rem; padding:.35rem .5rem; border-radius:.5rem; display:none; z-index:5; }
+    .owner-mode .edit-btn { display:inline-flex; align-items:center; gap:.35rem; }
+  </style>
+</head>
+<body class="font-sans relative">
+  <!-- Floating leaves background -->
+  <div class="leaves-bg" id="leaves"></div>
+
+  <!-- Header -->
+  <header class="bg-beige/90 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+    <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#home" class="nav-link">
+        <!-- Updated LOGO from Drive -->
+        <img src="https://drive.google.com/thumbnail?id=1MNymjbdHVCjYIlstZcB-iK6XoDETdGCU&sz=w2000" alt="WeddingKnotz Logo" class="h-16 w-auto" />
+      </a>
+
+      <!-- Desktop Nav -->
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#home" class="nav-link text-gray-700 hover:text-gold transition">Home</a>
+        <a href="#portfolio" class="nav-link text-gray-700 hover:text-gold transition">Portfolio</a>
+        <a href="#packages" class="nav-link text-gray-700 hover:text-gold transition">Packages</a>
+        <a href="#about" class="nav-link text-gray-700 hover:text-gold transition">About</a>
+        <a href="#contact" class="nav-link bg-gold text-white font-bold py-2 px-5 rounded-lg shadow-md hover:bg-gold-dark transition">Book Now</a>
+      </div>
+
+      <!-- Mobile -->
+      <button id="menu-btn" class="md:hidden text-3xl text-gray-700" aria-label="Open menu">
+        <ion-icon name="menu-outline"></ion-icon>
+      </button>
+    </nav>
+    <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-beige shadow-lg z-40">
+      <a href="#home" class="nav-link block py-3 px-6 text-gray-700 hover:bg-gray-100">Home</a>
+      <a href="#portfolio" class="nav-link block py-3 px-6 text-gray-700 hover:bg-gray-100">Portfolio</a>
+      <a href="#packages" class="nav-link block py-3 px-6 text-gray-700 hover:bg-gray-100">Packages</a>
+      <a href="#about" class="nav-link block py-3 px-6 text-gray-700 hover:bg-gray-100">About</a>
+      <a href="#contact" class="nav-link block py-4 px-6 bg-gold text-white font-bold text-center hover:bg-gold-dark">Book Now</a>
+    </div>
+  </header>
+
+  <!-- Main Page -->
+  <div id="main-page">
+    <main>
+      <!-- HERO (uses provided best photos) -->
+      <section id="home" class="relative">
+        <div id="hero-slideshow" data-editable data-key="hero">
+          <button class="edit-btn" title="Change hero photos"><ion-icon name="create-outline"></ion-icon>Edit</button>
+          <div class="slide active" style="background-image:url('https://drive.google.com/thumbnail?id=1AMCJQFSNg9yKN3Uo-yS4tECvCKE3-10G&sz=w2000');"></div>
+          <div class="slide" style="background-image:url('https://drive.google.com/thumbnail?id=1Z0P7c3x6IHc3a8rrH0t3qFHhs70tG7HL&sz=w2000');"></div>
+          <div class="slide" style="background-image:url('https://drive.google.com/thumbnail?id=1uRLwgYWb9tcco5UChFn54Yz5nBaVvY1s&sz=w2000');"></div>
+          <div class="slide-overlay"></div>
+        </div>
+        <div id="hero-content" class="flex items-center justify-center text-center text-white p-6">
+          <div>
+            <h1 class="text-5xl md:text-7xl font-bold font-serif mb-6 leading-tight text-gold-dark drop-shadow">A Promise With Every Click</h1>
+            <a href="#portfolio" class="bg-gold text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg hover:bg-gold-dark transition">View Portfolio</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABOUT + TEAM -->
+      <section id="about" class="py-24 bg-white relative z-10">
+        <div class="container mx-auto px-6">
+          <div class="flex flex-col md:flex-row items-center gap-12">
+            <div class="w-full md:w-1/3 relative" data-editable data-key="about-photo-mc">
+              <button class="edit-btn" title="Change MC photo"><ion-icon name="create-outline"></ion-icon>Edit</button>
+              <img src="https://drive.google.com/thumbnail?id=19gPIYXq6NgNYO1rXE70Q3G6hP_K3nTgs&sz=w2000" alt="Photo of MC" class="rounded-2xl shadow-xl w-full object-cover" />
+            </div>
+            <div class="w-full md:w-2/3">
+              <h2 class="text-4xl font-bold font-serif text-gold mb-4">About Me, MC</h2>
+              <p class="text-lg text-gray-700 mb-6">Welcome to WeddingKnotz! I'm MC, the eye behind the lens. I capture the raw, unfiltered emotions that make your wedding day uniquely yours. I believe in storytelling through frames that feel timeless and authentic.</p>
+              <p class="text-lg text-gray-700">With 5+ years behind the camera, from grand ceremonies to quiet glances, my team and I are here to preserve it all with care and craft.</p>
+            </div>
+          </div>
+
+          <div class="mt-20 text-center">
+            <h3 class="text-3xl font-bold font-serif text-gold mb-12">Meet The Team</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              <!-- Founder -->
+              <div class="relative bg-beige p-6 rounded-2xl shadow-xl card-hover" data-editable data-key="team-mc">
+                <button class="edit-btn" title="Change image"><ion-icon name="create-outline"></ion-icon>Edit</button>
+                <img src="https://drive.google.com/thumbnail?id=19gPIYXq6NgNYO1rXE70Q3G6hP_K3nTgs&sz=w2000" alt="Founder" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover" />
+                <h4 class="text-xl font-bold font-serif mb-1">MC - aka Anandharajan</h4>
+                <p class="text-gold font-semibold mb-2">Lead Candid Photographer & All Rounder</p>
+                <p class="text-gray-600 text-sm">Started as a wildlife photographer and founded “WeddingKnotz by MC”. The creative mind behind our photographs.</p>
+              </div>
+              <!-- Aravindh -->
+              <div class="relative bg-beige p-6 rounded-2xl shadow-xl card-hover" data-editable data-key="team-aravindh">
+                <button class="edit-btn" title="Change image"><ion-icon name="create-outline"></ionicon>Edit</button>
+                <img src="https://drive.google.com/thumbnail?id=1nAzMcKsHe6Du35-I1uR4mBBiNb3Z4O9o&sz=w2000" alt="Aravindh" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover" />
+                <h4 class="text-xl font-bold font-serif mb-1">Aravindh</h4>
+                <p class="text-gold font-semibold mb-2">Traditional Photographer & Album Designer</p>
+                <p class="text-gray-600 text-sm">Our second member—loyal, precise, and a pro album designer.</p>
+              </div>
+              <!-- Sharukan (renamed) -->
+              <div class="relative bg-beige p-6 rounded-2xl shadow-xl card-hover" data-editable data-key="team-sharukan">
+                <button class="edit-btn" title="Change image"><ion-icon name="create-outline"></ion-icon>Edit</button>
+                <img src="https://drive.google.com/thumbnail?id=1ufnVoKeDizBdWCFrks-qozVboKNDBBo3&sz=w2000" alt="Sharukan" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover" />
+                <h4 class="text-xl font-bold font-serif mb-1">Sharukan</h4>
+                <p class="text-gold font-semibold mb-2">Traditional Videographer & Video Editor</p>
+                <p class="text-gray-600 text-sm">The quiet powerhouse behind our reels and cinematic edits.</p>
+              </div>
+              <!-- Mohan -->
+              <div class="relative bg-beige p-6 rounded-2xl shadow-xl card-hover" data-editable data-key="team-mohan">
+                <button class="edit-btn" title="Change image"><ion-icon name="create-outline"></ion-icon>Edit</button>
+                <img src="https://drive.google.com/thumbnail?id=1P5QLAyfEwIXMxJStN-FzjgzgMOIQ7xvW&sz=w2000" alt="Mohan" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover" />
+                <h4 class="text-xl font-bold font-serif mb-1">Mohan</h4>
+                <p class="text-gold font-semibold mb-2">Cinematic Candid Videographer</p>
+                <p class="text-gray-600 text-sm">The eye for fleeting moments—and MC’s classmate.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PORTFOLIO (Drive images) -->
+      <section id="portfolio" class="py-24 bg-beige relative z-10">
+        <div class="container mx-auto px-6">
+          <h2 class="text-4xl font-bold font-serif text-center text-gold mb-4">Our Work</h2>
+          <p class="text-center text-lg text-gray-600 mb-12 max-w-xl mx-auto">A selection of favorite moments. Click any image to view larger.</p>
+          <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="relative gallery-item rounded-lg shadow-lg cursor-pointer overflow-hidden" data-editable data-key="g1"><button class="edit-btn" title="Change image"><ion-icon name="create-outline"></ion-icon>Edit</button><img src="https://drive.google.com/thumbnail?id=1AMCJQFSNg9yKN3Uo-yS4tECvCKE3-10G&sz=w2000" alt="Wedding Photo 1" class="w-full h-full object-cover rounded-lg transition-transform duration-300 hover:scale-105" /></div>
+            <div class="relative gallery-item rounded-lg shadow-lg cursor-pointer overflow-hidden" data-editable data-key="g2"><button class="edit-btn" title="Change image"><ion-icon name="create-outline"></ion-icon>Edit</button><img src="https://drive.google.com/thumbnail?id=1Z0P7c3x6IHc3a8rrH0t3qFHhs70tG7HL&sz=w2000" alt="Wedding Photo 2" class="w-full h-full object-cover rounded-lg transition-transform duration-300 hover:scale-105" /></div>
+            <div class="relative gallery-item rounded-lg shadow-lg cursor-pointer overflow-hidden" data-editable data-key="g3"><button class="edit-btn" title="Change image"><ion-icon name="create-outline"></ion-icon>Edit</button><img src="https://drive.google.com/thumbnail?id=1uRLwgYWb9tcco5UChFn54Yz5nBaVvY1s&sz=w2000" alt="Wedding Photo 3" class="w-full h-full object-cover rounded-lg transition-transform duration-300 hover:scale-105" /></div>
+            <div class="relative gallery-item rounded-lg shadow-lg cursor-pointer overflow-hidden" data-editable data-key="g4"><button class="edit-btn" title="Change image"><ion-icon name="create-outline"></ion-icon>Edit</button><img src="https://drive.google.com/thumbnail?id=1sr2sct6GxzKF6w5YsrIhiRIND99SeddR&sz=w2000" alt="Wedding Photo 4" class="w-full h-full object-cover rounded-lg transition-transform duration-300 hover:scale-105" /></div>
+            <div class="relative gallery-item rounded-lg shadow-lg cursor-pointer overflow-hidden" data-editable data-key="g5"><button class="edit-btn" title="Change image"><ion-icon name="create-outline"></ion-icon>Edit</button><img src="https://drive.google.com/thumbnail?id=1X4Eu5vJGDwNDAqjoTuv-6pWJBKPJt8mu&sz=w2000" alt="Wedding Photo 5" class="w-full h-full object-cover rounded-lg transition-transform duration-300 hover:scale-105" /></div>
+            <div class="relative gallery-item rounded-lg shadow-lg cursor-pointer overflow-hidden" data-editable data-key="g6"><button class="edit-btn" title="Change image"><ion-icon name="create-outline"></ion-icon>Edit</button><img src="https://drive.google.com/thumbnail?id=1niuz4UqScynHhOxiiLO6SAVO46vED8Mh&sz=w2000" alt="Wedding Photo 6" class="w-full h-full object-cover rounded-lg transition-transform duration-300 hover:scale-105" /></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PACKAGES (added Package 4 - Best Seller) -->
+      <section id="packages" class="py-24 bg-white relative z-10">
+        <div class="container mx-auto px-6">
+          <h2 class="text-4xl font-bold font-serif text-center text-gold mb-4">Our Packages</h2>
+          <p class="text-center text-lg text-gray-600 mb-12 max-w-xl mx-auto">We offer tailored packages to fit your special day perfectly.</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Package 1 -->
+            <div class="relative bg-beige p-8 rounded-2xl shadow-xl text-center border-t-4 border-gold card-hover">
+              <h3 class="text-2xl font-bold font-serif mb-3">Package 1</h3>
+              <p class="text-3xl font-bold text-gold mb-4">₹20,000</p>
+              <ul class="text-gray-700 mb-6 space-y-2">
+                <li>5 Hours single session</li>
+                <li>1 Traditional Photographer</li>
+                <li>1 Traditional Videographer</li>
+                <li>Album with 150 edited photos</li>
+                <li>Pendrive with Full Video</li>
+                <li>Online Gallery</li>
+              </ul>
+              <a href="#contact" class="font-bold text-gold-dark hover:text-gold">Inquire Now →</a>
+            </div>
+
+            <!-- Package 2 -->
+            <div class="relative bg-beige p-8 rounded-2xl shadow-xl text-center border-t-4 border-gold card-hover">
+              <h3 class="text-2xl font-bold font-serif mb-3">Package 2</h3>
+              <p class="text-3xl font-bold text-gold mb-4">₹25,000</p>
+              <ul class="text-gray-700 mb-6 space-y-2">
+                <li>5 Hours single session</li>
+                <li>1 Traditional Photographer</li>
+                <li>1 Candid Photographer</li>
+                <li>Album with 200 edited photos</li>
+                <li>Online Gallery</li>
+              </ul>
+              <a href="#contact" class="font-bold text-gold-dark hover:text-gold">Inquire Now →</a>
+            </div>
+
+            <!-- Package 3 -->
+            <div class="relative bg-beige p-8 rounded-2xl shadow-xl text-center border-t-4 border-gold card-hover">
+              <h3 class="text-2xl font-bold font-serif mb-3">Package 3</h3>
+              <p class="text-3xl font-bold text-gold mb-4">₹28,000</p>
+              <ul class="text-gray-700 mb-6 space-y-2">
+                <li>5 Hours single session</li>
+                <li>1 Traditional Photographer</li>
+                <li>1 Candid Photographer</li>
+                <li>1 Candid Videographer</li>
+                <li>Album with 200 edited photos</li>
+                <li>3–5 minute highlight film</li>
+                <li>Online Gallery</li>
+              </ul>
+              <a href="#contact" class="font-bold text-gold-dark hover:text-gold">Inquire Now →</a>
+            </div>
+
+            <!-- Package 4 (Best Seller) -->
+            <div class="relative bg-white p-8 rounded-2xl shadow-2xl text-center border-t-4 border-gold-dark scale-105 card-hover">
+              <p class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gold-dark text-white text-sm font-bold px-4 py-1 rounded-full">Best Seller</p>
+              <h3 class="text-2xl font-bold font-serif mb-3">Package 4</h3>
+              <p class="text-3xl font-bold text-gold-dark mb-4">₹40,000</p>
+              <ul class="text-gray-700 mb-6 space-y-2">
+                <li>5 Hours single session</li>
+                <li>1 Traditional Photographer</li>
+                <li>1 Traditional Videographer</li>
+                <li>1 Candid Photographer</li>
+                <li>1 Candid Videographer</li>
+                <li>Pendrive with Full Video</li>
+                <li>Album with 200 edited photos</li>
+                <li>3–5 minute highlight film</li>
+                <li>Online Gallery</li>
+              </ul>
+              <a href="#contact" class="font-bold text-gold-dark hover:text-gold">Inquire Now →</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT / BOOKING -->
+      <section id="contact" class="py-24 bg-white relative z-10">
+        <div class="container mx-auto px-6">
+          <div class="max-w-3xl mx-auto">
+            <h2 class="text-4xl font-bold font-serif text-center text-gold mb-4">Let's Create Magic</h2>
+            <p class="text-center text-lg text-gray-700 mb-12">Fill out the form to check availability. We'll finalize your booking via WhatsApp!</p>
+
+            <form id="contact-form" class="bg-beige p-8 md:p-12 rounded-2xl shadow-xl">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <label for="name" class="block text-gray-700 font-bold mb-2">Full Name</label>
+                  <input id="name" name="name" type="text" class="w-full px-4 py-3 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" required />
+                </div>
+                <div>
+                  <label for="email" class="block text-gray-700 font-bold mb-2">Email Address</label>
+                  <input id="email" name="email" type="email" class="w-full px-4 py-3 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" required />
+                </div>
+                <div>
+                  <label for="phone" class="block text-gray-700 font-bold mb-2">Phone Number</label>
+                  <input id="phone" name="phone" type="tel" class="w-full px-4 py-3 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" required />
+                </div>
+                <div>
+                  <label for="pkg1" class="block text-gray-700 font-bold mb-2">Package for Day 1</label>
+                  <select id="pkg1" name="pkg1" class="w-full px-4 py-3 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" required>
+                    <option value="">Select a package...</option>
+                    <option>Package 1</option>
+                    <option>Package 2</option>
+                    <option>Package 3</option>
+                    <option>Package 4</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="date1" class="block text-gray-700 font-bold mb-2">Day 1 Event Date</label>
+                  <input id="date1" name="date1" type="date" class="w-full px-4 py-3 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" required />
+                </div>
+                <div>
+                  <label for="pkg2" class="block text-gray-700 font-bold mb-2">Package for Day 2 (optional)</label>
+                  <select id="pkg2" name="pkg2" class="w-full px-4 py-3 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold">
+                    <option value="">None</option>
+                    <option>Package 1</option>
+                    <option>Package 2</option>
+                    <option>Package 3</option>
+                    <option>Package 4</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="date2" class="block text-gray-700 font-bold mb-2">Day 2 Event Date</label>
+                  <input id="date2" name="date2" type="date" class="w-full px-4 py-3 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" />
+                </div>
+              </div>
+              <div class="mb-6">
+                <label for="message" class="block text-gray-700 font-bold mb-2">Tell us about your event</label>
+                <textarea id="message" name="message" rows="6" class="w-full px-4 py-3 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" placeholder="Please share details like your venue, guest count, etc."></textarea>
+              </div>
+              <div class="text-center">
+                <button type="submit" class="bg-gold text-white font-bold py-3 px-10 rounded-lg text-lg shadow-lg hover:bg-gold-dark transition">Prepare Inquiry</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Footer (Instagram + Pinterest only) -->
+  <footer class="bg-gray-900 text-gray-400 py-12 relative z-10">
+    <div class="container mx-auto px-6 text-center">
+      <div class="flex justify-center gap-6 mb-6">
+        <a href="https://www.instagram.com/weddingknotz_by_mc?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="text-3xl hover:text-white transition" aria-label="Instagram"><ion-icon name="logo-instagram"></ion-icon></a>
+        <a href="https://pin.it/3JcEP5OsD" target="_blank" class="text-3xl hover:text-white transition" aria-label="Pinterest"><ion-icon name="logo-pinterest"></ion-icon></a>
+      </div>
+      <p>&copy; 2025 WeddingKnotz by MC. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Floating Action Buttons: Instagram above WhatsApp -->
+  <a href="https://www.instagram.com/weddingknotz_by_mc?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="fixed bottom-24 right-6 bg-gradient-to-tr from-pink-500 to-purple-500 text-white p-4 rounded-full shadow-lg z-50 hover:opacity-90 transition" aria-label="Open Instagram">
+    <ion-icon name="logo-instagram" class="text-3xl"></ion-icon>
+  </a>
+  <a href="https://wa.me/919360570841" target="_blank" class="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg z-50 hover:bg-green-600 transition" aria-label="Chat on WhatsApp">
+    <ion-icon name="logo-whatsapp" class="text-3xl"></ion-icon>
+  </a>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
+    <button id="lightbox-close" class="absolute top-4 right-6 text-white text-5xl" aria-label="Close">&times;</button>
+    <img id="lightbox-img" src="" alt="Enlarged gallery image" class="max-w-full max-h-full rounded-lg" />
+  </div>
+
+  <!-- Reusable Modal for WhatsApp steps -->
+  <div id="whatsapp-modal" class="modal hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4 opacity-0 invisible">
+    <div class="modal-content bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center transform scale-95">
+      <h3 id="modal-title" class="text-2xl font-bold font-serif mb-4">Title</h3>
+      <p id="modal-message" class="text-gray-700 mb-6">Message</p>
+      <div id="modal-buttons" class="space-y-4"></div>
+      <button id="modal-close" class="mt-6 text-gray-500 hover:text-gray-700 text-sm">Close</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Generate floating leaves
+      const leaves = document.getElementById('leaves');
+      const LEAF_COUNT = 14;
+      for (let i = 0; i < LEAF_COUNT; i++) {
+        const el = document.createElement('div');
+        el.className = 'leaf';
+        const startX = Math.random() * window.innerWidth;
+        const duration = 18 + Math.random() * 18; // 18–36s
+        const delay = -Math.random() * duration; // start at random progress
+        const drift = (Math.random() * 120 - 60) + 'px';
+        el.style.left = startX + 'px';
+        el.style.setProperty('--x', Math.random() * 40 - 20 + 'px');
+        el.style.setProperty('--drift', drift);
+        el.style.animationDuration = duration + 's, ' + (6 + Math.random() * 6) + 's, ' + (20 + Math.random() * 20) + 's';
+        el.style.animationDelay = delay + 's, ' + (Math.random() * 2) + 's, ' + (Math.random() * 5) + 's';
+        leaves.appendChild(el);
+      }
+
+      // Page navigation (main only; album removed)
+      const mainPage = document.getElementById('main-page');
+      const navLinks = document.querySelectorAll('.nav-link');
+      const mobileMenu = document.getElementById('mobile-menu');
+
+      const showPage = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        mainPage.classList.remove('hidden');
+        mobileMenu.classList.add('hidden');
+      };
+
+      navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          const href = link.getAttribute('href');
+          if (!href) return;
+          if (href.startsWith('#')) {
+            showPage();
+            if (href !== '#home' && href !== '#') {
+              setTimeout(() => document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' }), 120);
+            }
+          }
+        });
+      });
+
+      // Mobile menu toggle
+      document.getElementById('menu-btn').addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
+
+      // Hero slideshow
+      const slides = document.querySelectorAll('#hero-slideshow .slide');
+      let currentSlide = 0;
+      setInterval(() => {
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add('active');
+      }, 5000);
+
+      // Lightbox for gallery
+      const galleryItems = document.querySelectorAll('.gallery-item');
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      const lightboxClose = document.getElementById('lightbox-close');
+
+      galleryItems.forEach(item => {
+        item.addEventListener('click', () => {
+          const src = item.querySelector('img').src;
+          lightboxImg.src = src;
+          lightbox.classList.remove('hidden');
+        });
+      });
+      const closeLightbox = () => { lightbox.classList.add('hidden'); lightboxImg.src = ''; };
+      lightboxClose.addEventListener('click', closeLightbox);
+      lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+
+      // Modal helpers
+      const whatsappModal = document.getElementById('whatsapp-modal');
+      const modalTitle = document.getElementById('modal-title');
+      const modalMessage = document.getElementById('modal-message');
+      const modalButtons = document.getElementById('modal-buttons');
+      const modalClose = document.getElementById('modal-close');
+
+      const showModal = (title, message, buttonsHtml) => {
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+        modalButtons.innerHTML = buttonsHtml;
+        whatsappModal.classList.remove('hidden', 'opacity-0', 'invisible');
+        whatsappModal.querySelector('.modal-content').classList.remove('scale-95');
+      };
+      const closeModal = () => {
+        whatsappModal.classList.add('opacity-0', 'invisible');
+        whatsappModal.querySelector('.modal-content').classList.add('scale-95');
+        setTimeout(() => whatsappModal.classList.add('hidden'), 300);
+      };
+      modalClose.addEventListener('click', closeModal);
+      whatsappModal.addEventListener('click', (e) => { if (e.target === whatsappModal) closeModal(); });
+
+      // Contact form → WhatsApp (Day 1/Day 2 logic unchanged)
+      const contactForm = document.getElementById('contact-form');
+      const pkg2 = document.getElementById('pkg2');
+      const date2 = document.getElementById('date2');
+
+      const validateDay2 = () => {
+        if (pkg2.value && pkg2.value !== '') { date2.required = true; }
+        else { date2.required = false; }
+      };
+      pkg2.addEventListener('change', validateDay2);
+      validateDay2();
+
+      contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const yourNumber = '919360570841';
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const pkg1 = document.getElementById('pkg1').value;
+        const date1 = document.getElementById('date1').value;
+        const pkg2Val = pkg2.value;
+        const date2Val = document.getElementById('date2').value;
+        const msg = document.getElementById('message').value.trim();
+
+        if (pkg2Val && !date2Val) { alert('Please select Day 2 Event Date since you chose a Package for Day 2.'); return; }
+
+        const lines = [
+          'New Booking Inquiry:',
+          '',
+          `Name: ${name}`,
+          `Email: ${email}`,
+          `Phone: ${phone}`,
+          `Package (Day 1): ${pkg1}`,
+          `Day 1 Event Date: ${date1}`
+        ];
+        if (pkg2Val) { lines.push(`Package (Day 2): ${pkg2Val}`); lines.push(`Day 2 Event Date: ${date2Val}`); }
+        if (msg) { lines.push(`Message: ${msg}`); }
+
+        const waMessage = encodeURIComponent(lines.join('\n'));
+        const waURL = `https://wa.me/${yourNumber}?text=${waMessage}`;
+
+        const title = 'Inquiry Ready!';
+        const messageText = 'Your inquiry details are ready. Tap below to send them to us on WhatsApp to finalize your booking.';
+        const buttons = `<a href="${waURL}" target="_blank" class="block w-full bg-green-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-green-600 transition"><ion-icon name="logo-whatsapp" class="relative top-0.5 -mr-1"></ion-icon> Send Inquiry on WhatsApp</a>`;
+
+        showModal(title, messageText, buttons);
+        contactForm.reset();
+        validateDay2();
+      });
+
+      /* ------------------------------
+         OWNER MODE (image swap for site owner only)
+         How to enable: Press Alt + O, then enter PIN: wkmc
+      ------------------------------ */
+      const OWNER_PIN = 'wkmc';
+      const enableOwnerMode = () => { document.body.classList.add('owner-mode'); localStorage.setItem('wk_owner','true'); };
+      const disableOwnerMode = () => { document.body.classList.remove('owner-mode'); localStorage.removeItem('wk_owner'); };
+      if (localStorage.getItem('wk_owner') === 'true') enableOwnerMode();
+
+      window.addEventListener('keydown', (e) => {
+        if (e.altKey && (e.key === 'o' || e.key === 'O')) {
+          const pin = prompt('Enter owner PIN to toggle edit mode:');
+          if (pin === OWNER_PIN) {
+            if (document.body.classList.contains('owner-mode')) { disableOwnerMode(); alert('Owner mode disabled'); }
+            else { enableOwnerMode(); alert('Owner mode enabled'); }
+          } else if (pin) { alert('Incorrect PIN'); }
+        }
+      });
+
+      // Load persisted image URLs
+      document.querySelectorAll('[data-editable]').forEach(block => {
+        const key = block.getAttribute('data-key');
+        const stored = localStorage.getItem('wk_img_' + key);
+        if (stored) {
+          if (block.id === 'hero-slideshow') {
+            const urls = JSON.parse(stored);
+            const slides = block.querySelectorAll('.slide');
+            slides.forEach((s, i) => { if (urls[i]) s.style.backgroundImage = `url('${urls[i]}')`; });
+          } else {
+            const img = block.querySelector('img');
+            if (img) img.src = stored;
+          }
+        }
+        const btn = block.querySelector('.edit-btn');
+        if (btn) {
+          btn.addEventListener('click', () => {
+            if (block.id === 'hero-slideshow') {
+              const slides = Array.from(block.querySelectorAll('.slide'));
+              const current = slides.map(s => (s.style.backgroundImage || '').replace(/^url\("?|"?\)$/g,'').slice(4,-1));
+              const inputs = slides.map((_, i) => prompt(`Enter image URL for hero slide ${i+1}:`, current[i] || ''));
+              const urls = inputs.map(u => u && u.trim()).filter(Boolean);
+              if (urls.length) {
+                slides.forEach((s, i) => { if (urls[i]) s.style.backgroundImage = `url('${urls[i]}')`; });
+                localStorage.setItem('wk_img_' + key, JSON.stringify(urls));
+              }
+            } else {
+              const img = block.querySelector('img');
+              const newURL = prompt('Paste new image URL (direct link):', img?.src || '');
+              if (newURL) { img.src = newURL; localStorage.setItem('wk_img_' + key, newURL); }
+            }
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
