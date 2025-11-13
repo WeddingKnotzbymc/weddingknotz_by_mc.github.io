@@ -48,11 +48,14 @@
     @keyframes spin { 100% { rotate: 1turn; } }
 
     /* Hero slideshow */
-    #hero-slideshow { position: relative; height: 85vh; width: 100%; background-color: #e2e8f0; }
-    .slide { position: absolute; inset: 0; background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0; transition: opacity 1.5s ease-in-out; z-index: 1; }
+    #hero-slideshow { position: relative; height: 85vh; width: 100%; background-color: #e2e8f0; overflow: hidden; }
+    .slide { position: absolute; inset: 0; background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0; transition: opacity 1.5s ease-in-out; z-index: 1; display:flex; align-items:center; justify-content:center; }
     .slide.active { opacity: 0.9; z-index: 2; } /* ↓ reduced by ~10% as requested */
-    .slide-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,.40), rgba(0,0,0,.30)); z-index: 3; }
+    .slide-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,.40), rgba(0,0,0,.30)); z-index: 3; pointer-events:none; }
     #hero-content { position: absolute; inset: 0; z-index: 4; }
+
+    /* Slide internal IMG used only on mobile */
+    .slide-img { display:none; width:100%; height:100%; object-fit:cover; max-height:100%; }
 
     /* Modal transitions */
     .modal { transition: opacity .3s ease, visibility .3s ease; }
@@ -68,6 +71,26 @@
     .gallery-item img { display:block; }
     .fade-new { position:absolute; inset:0; opacity:0; transition: opacity .6s ease; }
     .fade-new.show { opacity:1; }
+
+    /* ===== Mobile tweaks: don't crop hero images =====
+       - On small screens we use the internal <img> (object-fit: contain)
+         and hide the background-image so the photo won't be cropped.
+       - We also reduce the hero height so mobile users see full image without heavy cropping.
+    */
+    @media (max-width: 768px) {
+      #hero-slideshow { height: auto; min-height: 50vh; padding: 6vh 0; }
+      .slide { position: relative; background-image: none !important; background-size: auto !important; background-position: center !important; }
+      .slide-img { display:block; object-fit:contain; height:auto; max-width:100%; max-height:60vh; }
+      .slide-overlay { background: linear-gradient(to bottom, rgba(0,0,0,.25), rgba(0,0,0,.15)); }
+      #hero-content { padding-top: 1rem; padding-bottom: 1rem; }
+    }
+  </style>
+    <link rel="icon" href="https://drive.google.com/thumbnail?id=1MNymjbdHVCjYIlstZcB-iK6XoDETdGCU&sz=w2000" />
+
+  <style>
+    /* Floating PNG flowers / logo behind content */
+    .floating-png { position:absolute; width:clamp(60px,6vw,160px); opacity:.12; z-index:0; mix-blend-mode:multiply; transform-origin:center; animation: floatP linear infinite; pointer-events:none; }
+    @keyframes floatP { 0%{transform:translateY(-10vh) rotate(0deg)} 50%{transform:translateY(60vh) rotate(180deg)} 100%{transform:translateY(-10vh) rotate(360deg)} }
   </style>
 </head>
 <body class="font-sans relative">
@@ -110,11 +133,16 @@
       <!-- HERO (auto from Drive) -->
       <section id="home" class="relative">
         <div id="hero-slideshow" data-editable data-key="hero">
-          <!-- We'll use just TWO layers and swap backgrounds to cycle through ALL photos smoothly -->
-          <div class="slide active" id="hero-slide-a" style="background-image:url('');"></div>
-          <div class="slide" id="hero-slide-b" style="background-image:url('');"></div>
+          <!-- Two layers (keeps desktop behavior). Each slide now contains an <img> used only on mobile (via media query). -->
+          <div class="slide active" id="hero-slide-a" style="background-image:url('');">
+            <img class="slide-img" alt="Hero A" src="">
+          </div>
+          <div class="slide" id="hero-slide-b" style="background-image:url('');">
+            <img class="slide-img" alt="Hero B" src="">
+          </div>
           <div class="slide-overlay"></div>
         </div>
+
         <div id="hero-content" class="flex items-center justify-center text-center text-white p-6">
           <div>
             <h1 class="text-5xl md:text-7xl font-bold font-serif mb-6 leading-tight text-gold-dark drop-shadow">A Promise With Every Click</h1>
@@ -163,21 +191,20 @@
                 <p class="text-gold font-semibold mb-2">Cinematic Candid Videographer</p>
                 <p class="text-gray-600 text-sm">The eye for fleeting moments—and MC’s classmate.</p>
               </div>
-			  <!-- JOIN OUR TEAM card (paste inside the team grid) -->
-<a href="https://wa.me/919360570641?text=Hi%20MC%2C%20I%27m%20interested%20in%20joining%20your%20team" target="_blank" rel="noopener noreferrer" class="block">
-  <div class="relative bg-beige p-6 rounded-2xl shadow-xl card-hover hover:scale-[1.02] transition-transform text-center">
-    <div class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md bg-white flex items-center justify-center text-3xl font-bold text-gold">
-      +
-    </div>
-    <h4 class="text-xl font-bold font-serif mb-1">Join Our Team</h4>
-    <p class="text-gold font-semibold mb-2">Want to be part of WeddingKnotz?</p>
-    <p class="text-gray-600 text-sm">Tap to start a WhatsApp chat — send your portfolio or CV and we'll get back to you.</p>
-    <div class="mt-4">
-      <span class="inline-block bg-gold text-white px-4 py-2 rounded-full font-semibold">Message on WhatsApp</span>
-    </div>
-  </div>
-</a>
-
+              <!-- JOIN OUR TEAM card -->
+              <a href="https://wa.me/919360570641?text=Hi%20MC%2C%20I%27m%20interested%20in%20joining%20your%20team" target="_blank" rel="noopener noreferrer" class="block">
+                <div class="relative bg-beige p-6 rounded-2xl shadow-xl card-hover hover:scale-[1.02] transition-transform text-center">
+                  <div class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md bg-white flex items-center justify-center text-3xl font-bold text-gold">
+                    +
+                  </div>
+                  <h4 class="text-xl font-bold font-serif mb-1">Join Our Team</h4>
+                  <p class="text-gold font-semibold mb-2">Want to be part of WeddingKnotz?</p>
+                  <p class="text-gray-600 text-sm">Tap to start a WhatsApp chat — send your portfolio or CV and we'll get back to you.</p>
+                  <div class="mt-4">
+                    <span class="inline-block bg-gold text-white px-4 py-2 rounded-full font-semibold">Message on WhatsApp</span>
+                  </div>
+                </div>
+              </a>
             </div>
           </div>
         </div>
@@ -379,6 +406,25 @@
         leaves.appendChild(el);
       }
 
+      // Add floating PNG decorations (using your logo). These are low-opacity, slow-moving elements.
+      (function addFloatingPNGs(){
+        const LOGO_PNG = 'https://drive.google.com/thumbnail?id=1MNymjbdHVCjYIlstZcB-iK6XoDETdGCU&sz=w800';
+        const PNG_COUNT = 8;
+        for (let i = 0; i < PNG_COUNT; i++){
+          const p = document.createElement('img');
+          p.className = 'floating-png';
+          p.src = LOGO_PNG;
+          // spread across viewport
+          p.style.left = (Math.random() * 100) + 'vw';
+          // start slightly above or within view
+          p.style.top = (-20 + Math.random() * 140) + 'vh';
+          p.style.animationDuration = (20 + Math.random() * 30) + 's';
+          p.style.opacity = (0.06 + Math.random() * 0.14).toString();
+          p.style.transform = `scale(${0.6 + Math.random() * 0.9})`;
+          leaves.appendChild(p);
+        }
+      })();
+
       // Page navigation
       const mainPage = document.getElementById('main-page');
       const navLinks = document.querySelectorAll('.nav-link');
@@ -422,7 +468,7 @@
         // Pattern 3: data-id="FILEID"
         for (const m of html.matchAll(/data-id=\"([a-zA-Z0-9_-]{20,})\"/g)) ids.add(m[1]);
         // Pattern 4: id:"FILEID" in inline JSON
-        for (const m of html.matchAll(/id\":\"([a-zA-Z0-9_-]{20,})\"/g)) ids.add(m[1]);
+        for (const m of html.matchAll(/\u0008id":"([a-zA-Z0-9_-]{20,})"/g)) ids.add(m[1]);
         return Array.from(ids);
       }
 
@@ -446,7 +492,13 @@
       let heroUrls = [];
       let heroIndex = 0;
 
-      function setHeroBackground(el, url){ el.style.backgroundImage = `url('${url}')`; }
+      function setHeroBackground(el, url){
+        // always set background-image (keeps desktop unchanged)
+        el.style.backgroundImage = `url('${url}')`;
+        // also set internal <img> src so mobile (which hides background-image) will display full image
+        const img = el.querySelector('img.slide-img');
+        if (img) img.src = url;
+      }
 
       async function refreshHeroFromDrive() {
         const urls = await loadDriveImageUrls();
