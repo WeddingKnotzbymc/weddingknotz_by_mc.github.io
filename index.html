@@ -23,9 +23,9 @@
       theme: {
         extend: {
           colors: {
-            beige: '#FDF5EC',
-            gold: '#B89A6B',
-            'gold-dark': '#9c815a'
+            beige: '#111111',
+            gold: '#D4AF7A',
+            'gold-dark': '#B8876B'
           },
           fontFamily: {
             sans: ['Inter', 'sans-serif'],
@@ -38,7 +38,18 @@
 
   <style>
     :root { --leaf-size-min: 20px; --leaf-size-max: 56px; }
-    body { background-color: #FDF5EC; color: #333; }
+    
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(212,175,122,0.12), transparent 25%),
+    radial-gradient(circle at bottom right, rgba(184,135,107,0.12), transparent 30%),
+    linear-gradient(to bottom, #0F0F0F, #151515, #0A0A0A);
+  color: #F5F1EA;
+  overflow-x: hidden;
+}
+
+
 
     /* Blurred floating leaves background */
     .leaves-bg { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; filter: blur(2px); opacity: .25; }
@@ -48,7 +59,7 @@
     @keyframes spin { 100% { rotate: 1turn; } }
 
     /* Hero slideshow */
-    #hero-slideshow { position: relative; height: 85vh; width: 100%; background-color: #e2e8f0; overflow: hidden; }
+    #hero-slideshow { display:none; }
     .slide { position: absolute; inset: 0; background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0; transition: opacity 1.5s ease-in-out; z-index: 1; display:flex; align-items:center; justify-content:center; }
     .slide.active { opacity: 0.9; z-index: 2; } /* ↓ reduced by ~10% as requested */
     .slide-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,.40), rgba(0,0,0,.30)); z-index: 3; pointer-events:none; }
@@ -84,8 +95,297 @@
       .slide-overlay { background: linear-gradient(to bottom, rgba(0,0,0,.25), rgba(0,0,0,.15)); }
       #hero-content { padding-top: 1rem; padding-bottom: 1rem; }
     }
-  </style>
-    <link rel="icon" href="https://drive.google.com/thumbnail?id=1MNymjbdHVCjYIlstZcB-iK6XoDETdGCU&sz=w2000" />
+  
+/* ===== PREMIUM MOBILE OPTIMIZATION ===== */
+@media (max-width: 768px) {
+
+  body {
+    overflow-x: hidden;
+  }
+
+  h1 {
+    font-size: 2.8rem !important;
+    line-height: 1.1 !important;
+  }
+
+  h2 {
+    font-size: 2rem !important;
+  }
+
+  .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .card-hover:hover {
+    transform: none !important;
+  }
+
+  #hero-content {
+    padding: 2rem 1rem !important;
+  }
+
+  #hero-slideshow {
+    min-height: 65vh !important;
+  }
+
+  .slide-img {
+    max-height: 75vh !important;
+    border-radius: 1rem;
+  }
+
+  .gallery-item img {
+    height: 240px !important;
+  }
+
+  .floating-png,
+  .leaf {
+    opacity: 0.08 !important;
+  }
+
+  .grid {
+    gap: 1.2rem !important;
+  }
+
+  form {
+    padding: 1.5rem !important;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+
+/* ===== PORTFOLIO CAROUSEL ===== */
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.carousel-card {
+  min-width: 350px;
+  height: 500px;
+  border-radius: 2rem;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  scroll-snap-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+
+.carousel-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s ease;
+}
+
+.carousel-card:hover img {
+  transform: scale(1.08);
+}
+
+.carousel-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.65), transparent);
+}
+
+.carousel-text {
+  position: absolute;
+  bottom: 2rem;
+  left: 2rem;
+  color: white;
+}
+
+@media (max-width:768px){
+  .carousel-card {
+    min-width: 85vw;
+    height: 420px;
+  }
+
+  #carousel-prev,
+  #carousel-next {
+    display: none;
+  }
+}
+
+
+/* Elegant floating decor */
+.luxury-orb {
+  position: absolute;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(198,161,110,0.18), transparent 70%);
+  filter: blur(10px);
+  animation: floatLuxury 18s ease-in-out infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.luxury-line {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  border: 1px solid rgba(198,161,110,0.15);
+  border-radius: 50%;
+  animation: rotateLuxury 25s linear infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@keyframes floatLuxury {
+  0%,100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes rotateLuxury {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+
+/* Premium shadow leaves */
+.shadow-leaf {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(111,78,55,0.08), transparent 70%);
+  filter: blur(8px);
+  opacity: 0.5;
+  animation: leafFloat 16s ease-in-out infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.shadow-leaf::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(111,78,55,0.08);
+  border-radius: 60% 40% 70% 30%;
+  transform: rotate(45deg);
+}
+
+@keyframes leafFloat {
+  0%,100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-30px) rotate(8deg);
+  }
+}
+
+
+/* ===== CINEMATIC DARK LUXURY ===== */
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at center, transparent 20%, rgba(0,0,0,0.45));
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Film grain */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    repeating-radial-gradient(circle at center, rgba(255,255,255,0.015) 0, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 100%);
+  background-size: 3px 3px;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Cinematic glow */
+.glow-gold {
+  box-shadow:
+    0 0 30px rgba(212,175,122,0.18),
+    0 0 60px rgba(212,175,122,0.08);
+}
+
+/* Glass luxury cards */
+.card-hover,
+.carousel-card,
+form {
+  background: rgba(20,20,20,0.75) !important;
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(212,175,122,0.12);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.45),
+    inset 0 0 0 1px rgba(255,255,255,0.02);
+}
+
+/* Luxury hover */
+.card-hover:hover,
+.carousel-card:hover {
+  transform: translateY(-10px) scale(1.01);
+  box-shadow:
+    0 25px 50px rgba(0,0,0,0.5),
+    0 0 35px rgba(212,175,122,0.15);
+}
+
+/* Floating cinematic leaves */
+.dark-leaf {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  background:
+    radial-gradient(circle, rgba(212,175,122,0.08), transparent 70%);
+  filter: blur(16px);
+  border-radius: 50%;
+  animation: cinematicFloat 18s ease-in-out infinite;
+  z-index: 0;
+}
+
+@keyframes cinematicFloat {
+  0%,100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-40px) rotate(10deg);
+  }
+}
+
+/* Gold elegant text glow */
+h1, h2 {
+  text-shadow:
+    0 0 18px rgba(212,175,122,0.12);
+}
+
+/* Elegant buttons */
+button,
+a.bg-gradient-to-r {
+  box-shadow:
+    0 10px 30px rgba(212,175,122,0.18);
+}
+
+/* Video player cinematic */
+video {
+  border: 1px solid rgba(212,175,122,0.2);
+  box-shadow:
+    0 25px 50px rgba(0,0,0,0.5),
+    0 0 40px rgba(212,175,122,0.12);
+}
+
+/* Smooth reveal */
+section {
+  position: relative;
+  overflow: hidden;
+}
+
+</style>
+    <link rel="icon" href="https://drive.google.com/thumbnail?id=1lja7z7yi3R0m5bjJ7XN2bTczJJ4gpbyU&sz=w2000" />
 
   <style>
     /* Floating PNG flowers / logo behind content */
@@ -93,36 +393,55 @@
     @keyframes floatP { 0%{transform:translateY(-10vh) rotate(0deg)} 50%{transform:translateY(60vh) rotate(180deg)} 100%{transform:translateY(-10vh) rotate(360deg)} }
   </style>
 </head>
-<body class="font-sans relative">
+<body class="font-sans relative overflow-x-hidden">
+<div class="dark-leaf" style="top:5%;left:-120px;"></div>
+<div class="dark-leaf" style="top:30%;right:-100px;"></div>
+<div class="dark-leaf" style="bottom:20%;left:10%;"></div>
+<div class="dark-leaf" style="bottom:5%;right:5%;"></div>
+
+<div class="shadow-leaf" style="top:10%;left:-40px;"></div>
+<div class="shadow-leaf" style="top:35%;right:-60px;width:240px;height:240px;"></div>
+<div class="shadow-leaf" style="bottom:12%;left:8%;width:200px;height:200px;"></div>
+<div class="shadow-leaf" style="bottom:30%;right:5%;"></div>
+
+
+<!-- Elegant floating decorative objects -->
+<div class="luxury-orb" style="width:220px;height:220px;top:8%;left:-80px;"></div>
+<div class="luxury-orb" style="width:180px;height:180px;top:40%;right:-60px;"></div>
+<div class="luxury-orb" style="width:260px;height:260px;bottom:10%;left:10%;"></div>
+
+<div class="luxury-line" style="top:18%;right:8%;"></div>
+<div class="luxury-line" style="bottom:15%;left:5%;"></div>
+
   <!-- Floating leaves background -->
   <div class="leaves-bg" id="leaves"></div>
 
   <!-- Header -->
-  <header class="bg-beige/90 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+  <header class="bg-[#101010]/90 backdrop-blur-md sticky top-0 z-50 shadow-sm">
     <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
       <a href="#home" class="nav-link">
-        <img src="https://drive.google.com/thumbnail?id=1MNymjbdHVCjYIlstZcB-iK6XoDETdGCU&sz=w2000" alt="WeddingKnotz Logo" class="h-16 w-auto" />
+        <img src="https://drive.google.com/thumbnail?id=1lja7z7yi3R0m5bjJ7XN2bTczJJ4gpbyU&sz=w2000" alt="WeddingKnotz Logo" class="h-16 w-auto" />
       </a>
 
       <!-- Desktop Nav -->
       <div class="hidden md:flex items-center gap-8">
-        <a href="#home" class="nav-link text-gray-700 hover:text-gold transition">Home</a>
-        <a href="#portfolio" class="nav-link text-gray-700 hover:text-gold transition">Portfolio</a>
-        <a href="#packages" class="nav-link text-gray-700 hover:text-gold transition">Packages</a>
-        <a href="#about" class="nav-link text-gray-700 hover:text-gold transition">About</a>
+        <a href="#home" class="nav-link text-gray-300 hover:text-gold transition">Home</a>
+        <a href="#portfolio" class="nav-link text-gray-300 hover:text-gold transition">Portfolio</a>
+        <a href="#packages" class="nav-link text-gray-300 hover:text-gold transition">Packages</a>
+        <a href="#about" class="nav-link text-gray-300 hover:text-gold transition">About</a>
         <a href="#contact" class="nav-link bg-gold text-white font-bold py-2 px-5 rounded-lg shadow-md hover:bg-gold-dark transition">Book Now</a>
       </div>
 
       <!-- Mobile -->
-      <button id="menu-btn" class="md:hidden text-3xl text-gray-700" aria-label="Open menu">
+      <button id="menu-btn" class="md:hidden text-3xl text-gray-300" aria-label="Open menu">
         <ion-icon name="menu-outline"></ion-icon>
       </button>
     </nav>
-    <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-beige shadow-lg z-40">
-      <a href="#home" class="nav-link block py-3 px-6 text-gray-700 hover:bg-gray-100">Home</a>
-      <a href="#portfolio" class="nav-link block py-3 px-6 text-gray-700 hover:bg-gray-100">Portfolio</a>
-      <a href="#packages" class="nav-link block py-3 px-6 text-gray-700 hover:bg-gray-100">Packages</a>
-      <a href="#about" class="nav-link block py-3 px-6 text-gray-700 hover:bg-gray-100">About</a>
+    <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-[#101010] shadow-lg z-40">
+      <a href="#home" class="nav-link block py-3 px-6 text-gray-300 hover:bg-gray-100">Home</a>
+      <a href="#portfolio" class="nav-link block py-3 px-6 text-gray-300 hover:bg-gray-100">Portfolio</a>
+      <a href="#packages" class="nav-link block py-3 px-6 text-gray-300 hover:bg-gray-100">Packages</a>
+      <a href="#about" class="nav-link block py-3 px-6 text-gray-300 hover:bg-gray-100">About</a>
       <a href="#contact" class="nav-link block py-4 px-6 bg-gold text-white font-bold text-center hover:bg-gold-dark">Book Now</a>
     </div>
   </header>
@@ -143,63 +462,72 @@
           <div class="slide-overlay"></div>
         </div>
 
-        <div id="hero-content" class="flex items-center justify-center text-center text-white p-6">
+        <div id="hero-content" class="hidden">
           <div>
-            <h1 class="text-5xl md:text-7xl font-bold font-serif mb-6 leading-tight text-gold-dark drop-shadow">A Promise With Every Click</h1>
-            <a href="#portfolio" class="bg-gold text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg hover:bg-gold-dark transition">View Portfolio</a>
+            <h1 class="text-5xl md:text-7xl font-bold font-serif mb-6 leading-tight text-gold-dark drop-shadow">Some Moments Deserve More Than Memories</h1>
+            
+<p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-8 leading-relaxed">
+The trembling hands before the knot. The silent tears of your parents.
+The smile you didn’t know we captured.
+</p>
+
+<a href="#portfolio" class="bg-gradient-to-r from-gold to-gold-dark text-black font-bold py-4 px-10 rounded-full text-lg shadow-2xl hover:scale-105 transition duration-300">
+Reserve Your Date
+</a>
+
           </div>
         </div>
 
       <!-- ABOUT + TEAM (unchanged content) -->
-      <section id="about" class="py-24 bg-white relative z-10">
+      <section id="about" class="py-24 bg-[#141414] relative z-10">
         <div class="container mx-auto px-6">
           <div class="flex flex-col md:flex-row items-center gap-12">
             <div class="w-full md:w-1/3 relative" data-editable data-key="about-photo-mc">
-              <img src="https://drive.google.com/thumbnail?id=19gPIYXq6NgNYO1rXE70Q3G6hP_K3nTgs&sz=w2000" alt="Photo of MC" class="rounded-2xl shadow-xl w-full object-cover" />
+              <img src="https://drive.google.com/thumbnail?id=1F4VPxufyifnOsooJ9HOcH-gdcFdSOTaD&sz=w2000" alt="Photo of MC" class="rounded-2xl shadow-2xl backdrop-blur-sm w-full object-cover" />
             </div>
             <div class="w-full md:w-2/3">
               <h2 class="text-4xl font-bold font-serif text-gold mb-4">About Me, MC</h2>
-              <p class="text-lg text-gray-700 mb-6">Welcome to WeddingKnotz! I'm MC, the eye behind the lens. I capture the raw, unfiltered emotions that make your wedding day uniquely yours. I believe in storytelling through frames that feel timeless and authentic.</p>
-              <p class="text-lg text-gray-700">With 5+ years behind the camera, from grand ceremonies to quiet glances, my team and I are here to preserve it all with care and craft.</p>
+              <p class="text-lg text-gray-300 mb-6">Welcome to WeddingKnotz! I'm MC, the eye behind the lens. I capture the silent tears of parents, the nervous smiles before the knot, and the kind of love that words can never fully explain. I believe in storytelling through frames that feel timeless and authentic.</p>
+              <p class="text-lg text-gray-300">With 5+ years behind the camera, from grand ceremonies to quiet glances, my team and I are here to preserve it all with care and craft.</p>
             </div>
           </div>
 
           <div class="mt-20 text-center">
             <h3 class="text-3xl font-bold font-serif text-gold mb-12">Meet The Team</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              <div class="relative bg-beige p-6 rounded-2xl shadow-xl card-hover" data-editable data-key="team-mc">
-                <img src="https://drive.google.com/thumbnail?id=19gPIYXq6NgNYO1rXE70Q3G6hP_K3nTgs&sz=w2000" alt="Founder" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover" />
+              <div class="relative bg-[#101010] p-6 rounded-2xl shadow-2xl backdrop-blur-sm card-hover" data-editable data-key="team-mc">
+                <img src="https://drive.google.com/thumbnail?id=1F4VPxufyifnOsooJ9HOcH-gdcFdSOTaD&sz=w2000" alt="Founder" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover" />
                 <h4 class="text-xl font-bold font-serif mb-1">MC - aka Anandharajan</h4>
                 <p class="text-gold font-semibold mb-2">Lead Candid Photographer & All Rounder</p>
-                <p class="text-gray-600 text-sm">Started as a wildlife photographer and founded “WeddingKnotz by MC”. The creative mind behind our photographs.</p>
+                <p class="text-gray-400 text-sm">Started as a wildlife photographer and founded “WeddingKnotz by MC”. The creative mind behind our photographs.</p>
               </div>
-              <div class="relative bg-beige p-6 rounded-2xl shadow-xl card-hover" data-editable data-key="team-aravindh">
-                <img src="https://drive.google.com/thumbnail?id=1nAzMcKsHe6Du35-I1uR4mBBiNb3Z4O9o&sz=w2000" alt="Aravindh" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover" />
-                <h4 class="text-xl font-bold font-serif mb-1">Aravindh</h4>
-                <p class="text-gold font-semibold mb-2">Traditional Photographer & Album Designer</p>
-                <p class="text-gray-600 text-sm">Our second member—loyal, precise, and a pro album designer.</p>
+              <div class="relative bg-[#101010] p-6 rounded-2xl shadow-2xl backdrop-blur-sm card-hover" data-editable data-key="team-divya">
+                <img src="https://drive.google.com/thumbnail?id=1yXc1f3mJt2Bh0_Xz-Nhh_w_HtIAvzejA&sz=w2000" alt="Divya" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover" />
+                <h4 class="text-xl font-bold font-serif mb-1">Divya</h4>
+                <p class="text-gold font-semibold mb-2">Candid Photographer & Creative Designer</p>
+                <p class="text-gray-400 text-sm">Capturing elegant emotions and aesthetic candid moments with creative vision.</p>
               </div>
-              <div class="relative bg-beige p-6 rounded-2xl shadow-xl card-hover" data-editable data-key="team-sharukan">
-                <img src="https://drive.google.com/thumbnail?id=1ufnVoKeDizBdWCFrks-qozVboKNDBBo3&sz=w2000" alt="Sharukan" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover" />
-                <h4 class="text-xl font-bold font-serif mb-1">Sharukan</h4>
-                <p class="text-gold font-semibold mb-2">Traditional Videographer & Video Editor</p>
-                <p class="text-gray-600 text-sm">The quiet powerhouse behind our reels and cinematic edits.</p>
+              <div class="relative bg-[#101010] p-6 rounded-2xl shadow-2xl backdrop-blur-sm card-hover" data-editable data-key="team-ashik">
+                <img src="https://drive.google.com/thumbnail?id=1LtQS_MCB1PRx-jFNqo8U6FdEAJwpaz7R&sz=w2000" alt="Ashik" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover" />
+                <h4 class="text-xl font-bold font-serif mb-1">Ashik</h4>
+                <p class="text-gold font-semibold mb-2">Content Creator & Video Editor</p>
+                <p class="text-gray-400 text-sm">Focused on cinematic storytelling and emotional wedding films.</p>
               </div>
-              <div class="relative bg-beige p-6 rounded-2xl shadow-xl card-hover" data-editable data-key="team-mohan">
+              <div class="relative bg-[#101010] p-6 rounded-2xl shadow-2xl backdrop-blur-sm card-hover" data-editable data-key="team-mohan">
                 <img src="https://drive.google.com/thumbnail?id=1P5QLAyfEwIXMxJStN-FzjgzgMOIQ7xvW&sz=w2000" alt="Mohan" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover" />
                 <h4 class="text-xl font-bold font-serif mb-1">Mohan</h4>
                 <p class="text-gold font-semibold mb-2">Cinematic Candid Videographer</p>
-                <p class="text-gray-600 text-sm">The eye for fleeting moments—and MC’s classmate.</p>
+                <p class="text-gray-400 text-sm">The eye for fleeting moments—and MC’s classmate.</p>
               </div>
               <!-- JOIN OUR TEAM card -->
               <a href="https://wa.me/919360570641?text=Hi%20MC%2C%20I%27m%20interested%20in%20joining%20your%20team" target="_blank" rel="noopener noreferrer" class="block">
-                <div class="relative bg-beige p-6 rounded-2xl shadow-xl card-hover hover:scale-[1.02] transition-transform text-center">
-                  <div class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md bg-white flex items-center justify-center text-3xl font-bold text-gold">
+                <div class="relative bg-[#101010] p-6 rounded-2xl shadow-2xl backdrop-blur-sm card-hover hover:scale-[1.02] transition-transform text-center">
+                  <div class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md bg-[#141414] flex items-center justify-center text-3xl font-bold text-gold">
                     +
                   </div>
                   <h4 class="text-xl font-bold font-serif mb-1">Join Our Team</h4>
                   <p class="text-gold font-semibold mb-2">Want to be part of WeddingKnotz?</p>
-                  <p class="text-gray-600 text-sm">Tap to start a WhatsApp chat — send your portfolio or CV and we'll get back to you.</p>
+                  <p class="text-gray-400 text-sm">Tap to start a WhatsApp chat — send your portfolio or CV and we'll get back to you.</p>
                   <div class="mt-4">
                     <span class="inline-block bg-gold text-white px-4 py-2 rounded-full font-semibold">Message on WhatsApp</span>
                   </div>
@@ -210,115 +538,195 @@
         </div>
       </section>
 
-      <!-- PORTFOLIO (auto from Drive) -->
-      <section id="portfolio" class="py-24 bg-beige relative z-10">
-        <div class="container mx-auto px-6">
-          <h2 class="text-4xl font-bold font-serif text-center text-gold mb-4">Our Work</h2>
-          <p class="text-center text-lg text-gray-600 mb-12 max-w-xl mx-auto">A selection of favorite moments. Click any image to view larger. (Auto-updates from your Drive folder)</p>
-          <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      
+<!-- PORTFOLIO CAROUSEL -->
+<section id="portfolio" class="py-24 bg-[#101010] relative z-10 overflow-hidden">
+  <div class="container mx-auto px-6">
+    <h2 class="text-5xl font-bold font-serif text-center text-gold mb-4">Moments That Became Forever</h2>
+    <p class="text-center text-lg text-gray-400 mb-14 max-w-2xl mx-auto">
+      Moments fade... but the emotions we capture stay alive forever. Every frame is crafted to make you relive your wedding day for a lifetime.
+    </p>
 
-          <!-- Debug / Test results -->
-          <details class="mt-8">
-            <summary class="cursor-pointer text-sm text-gray-500">Debug & Tests</summary>
-            <pre id="debug" class="text-xs p-3 bg-white/70 rounded-lg overflow-auto max-h-64"></pre>
-          </details>
-        </div>
-      </section>
+    <div class="relative">
+
+      <div id="portfolio-carousel"
+        class="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 no-scrollbar">
+
+      </div>
+
+      <button id="carousel-prev"
+        class="absolute left-0 top-1/2 -translate-y-1/2 bg-[#141414]/90 backdrop-blur p-4 rounded-full shadow-2xl backdrop-blur-sm z-20 hover:scale-110 transition">
+        ❮
+      </button>
+
+      <button id="carousel-next"
+        class="absolute right-0 top-1/2 -translate-y-1/2 bg-[#141414]/90 backdrop-blur p-4 rounded-full shadow-2xl backdrop-blur-sm z-20 hover:scale-110 transition">
+        ❯
+      </button>
+
+    </div>
+  </div>
+</section>
+
+
+
+
 
       <!-- PACKAGES -->
-      <section id="packages" class="py-24 bg-white relative z-10">
-        <div class="container mx-auto px-6">
-          <h2 class="text-4xl font-bold font-serif text-center text-gold mb-4">Our Packages</h2>
-          <p class="text-center text-lg text-gray-600 mb-12 max-w-xl mx-auto">We offer tailored packages to fit your special day perfectly.</p>
+      
+<section id="packages" class="py-24 bg-gradient-to-b from-white to-beige relative z-10">
+  <div class="container mx-auto px-6">
+    <h2 class="text-5xl font-bold font-serif text-center text-gold mb-4">Wedding Packages</h2>
+    <p class="text-center text-lg text-gray-400 mb-14 max-w-2xl mx-auto">
+      Elegant wedding coverage crafted for every celebration — from intimate ceremonies to grand multi‑day events.
+    </p>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="relative bg-beige p-8 rounded-2xl shadow-xl text-center border-t-4 border-gold card-hover">
-              <h3 class="text-2xl font-bold font-serif mb-3">Package 1</h3>
-              <p class="text-3xl font-bold text-gold mb-4">₹20,000</p>
-              <ul class="text-gray-700 mb-6 space-y-2">
-                <li>5 Hours single session</li>
-                <li>1 Traditional Photographer</li>
-                <li>1 Traditional Videographer</li>
-                <li>Album with 150 edited photos</li>
-                <li>Pendrive with Full Video</li>
-                <li>Online Gallery</li>
-              </ul>
-              <a href="#contact" class="font-bold text-gold-dark hover:text-gold">Inquire Now →</a>
-            </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
 
-            <div class="relative bg-beige p-8 rounded-2xl shadow-xl text-center border-t-4 border-gold card-hover">
-              <h3 class="text-2xl font-bold font-serif mb-3">Package 2</h3>
-              <p class="text-3xl font-bold text-gold mb-4">₹25,000</p>
-              <ul class="text-gray-700 mb-6 space-y-2">
-                <li>5 Hours single session</li>
-                <li>1 Traditional Photographer</li>
-                <li>1 Candid Photographer</li>
-                <li>Album with 200 edited photos</li>
-                <li>Online Gallery</li>
-              </ul>
-              <a href="#contact" class="font-bold text-gold-dark hover:text-gold">Inquire Now →</a>
-            </div>
+      <div class="bg-[#141414] rounded-3xl p-8 shadow-2xl backdrop-blur-sm border border-gold/10 card-hover">
+        <h3 class="text-3xl font-serif font-bold text-gold mb-2">Package 1</h3>
+        <p class="text-sm uppercase tracking-widest text-gray-500 mb-4">Single Event</p>
+        <p class="text-4xl font-bold text-gold-dark mb-6">₹22,500/-</p>
+        <ul class="space-y-3 text-gray-300">
+          <li>• Traditional Photography</li>
+          <li>• Traditional Videography</li>
+          <li>• Album with 150 Photos</li>
+          <li>• 1 (12x18) Photo Frame</li>
+          <li>• Complimentary Calendar</li>
+        </ul>
+      </div>
 
-            <div class="relative bg-beige p-8 rounded-2xl shadow-xl text-center border-t-4 border-gold card-hover">
-              <h3 class="text-2xl font-bold font-serif mb-3">Package 3</h3>
-              <p class="text-3xl font-bold text-gold mb-4">₹28,000</p>
-              <ul class="text-gray-700 mb-6 space-y-2">
-                <li>5 Hours single session</li>
-                <li>1 Traditional Photographer</li>
-                <li>1 Candid Photographer</li>
-                <li>1 Candid Videographer</li>
-                <li>Album with 200 edited photos</li>
-                <li>3–5 minute highlight film</li>
-                <li>Online Gallery</li>
-              </ul>
-              <a href="#contact" class="font-bold text-gold-dark hover:text-gold">Inquire Now →</a>
-            </div>
+      <div class="bg-[#141414] rounded-3xl p-8 shadow-2xl backdrop-blur-sm border border-gold/10 card-hover">
+        <h3 class="text-3xl font-serif font-bold text-gold mb-2">Package 2</h3>
+        <p class="text-sm uppercase tracking-widest text-gray-500 mb-4">Single Event</p>
+        <p class="text-4xl font-bold text-gold-dark mb-6">₹28,000/-</p>
+        <ul class="space-y-3 text-gray-300">
+          <li>• Traditional Photography</li>
+          <li>• Candid Photography</li>
+          <li>• Album with 200 Photos</li>
+          <li>• 1 (12x18) Photo Frame</li>
+          <li>• Complimentary Calendar</li>
+        </ul>
+      </div>
 
-            <div class="relative bg-white p-8 rounded-2xl shadow-2xl text-center border-t-4 border-gold-dark scale-105 card-hover">
-              <p class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gold-dark text-white text-sm font-bold px-4 py-1 rounded-full">Best Seller</p>
-              <h3 class="text-2xl font-bold font-serif mb-3">Package 4</h3>
-              <p class="text-3xl font-bold text-gold-dark mb-4">₹40,000</p>
-              <ul class="text-gray-700 mb-6 space-y-2">
-                <li>5 Hours single session</li>
-                <li>1 Traditional Photographer</li>
-                <li>1 Traditional Videographer</li>
-                <li>1 Candid Photographer</li>
-                <li>1 Candid Videographer</li>
-                <li>Pendrive with Full Video</li>
-                <li>Album with 200 edited photos</li>
-                <li>3–5 minute highlight film</li>
-                <li>Online Gallery</li>
-              </ul>
-              <a href="#contact" class="font-bold text-gold-dark hover:text-gold">Inquire Now →</a>
-            </div>
-          </div>
+      <div class="bg-gold-dark text-white rounded-3xl p-8 shadow-2xl scale-[1.02] card-hover relative overflow-hidden">
+        <div class="absolute top-5 right-5 bg-[#141414] text-gold-dark px-4 py-1 rounded-full text-sm font-bold">Popular</div>
+        <h3 class="text-3xl font-serif font-bold mb-2">Package 3</h3>
+        <p class="text-sm uppercase tracking-widest text-white/70 mb-4">Single Event</p>
+        <p class="text-4xl font-bold mb-6">₹40,000/-</p>
+        <ul class="space-y-3 text-white/90">
+          <li>• Traditional Photography</li>
+          <li>• Candid Photography</li>
+          <li>• Candid Videography</li>
+          <li>• Album with 200 Photos</li>
+          <li>• 2 (12x18) Photo Frames</li>
+          <li>• Complimentary Calendar</li>
+        </ul>
+      </div>
+
+      <div class="bg-[#141414] rounded-3xl p-8 shadow-2xl backdrop-blur-sm border border-gold/10 card-hover">
+        <h3 class="text-3xl font-serif font-bold text-gold mb-2">Package 4</h3>
+        <p class="text-sm uppercase tracking-widest text-gray-500 mb-4">Single Event</p>
+        <p class="text-4xl font-bold text-gold-dark mb-6">₹50,000/-</p>
+        <ul class="space-y-3 text-gray-300">
+          <li>• Traditional & Candid Photography</li>
+          <li>• Traditional & Candid Videography</li>
+          <li>• Album with 200 Photos</li>
+          <li>• Mini Album Included</li>
+          <li>• 2 (12x18) Photo Frames</li>
+          <li>• Complimentary Calendar</li>
+        </ul>
+      </div>
+
+      <div class="bg-[#141414] rounded-3xl p-8 shadow-2xl backdrop-blur-sm border border-gold/10 card-hover">
+        <h3 class="text-3xl font-serif font-bold text-gold mb-2">Package 5</h3>
+        <p class="text-sm uppercase tracking-widest text-gray-500 mb-4">Double Event</p>
+        <p class="text-4xl font-bold text-gold-dark mb-6">₹70,000/-</p>
+        <ul class="space-y-3 text-gray-300">
+          <li>• Day 1 – Traditional Photography & Videography</li>
+          <li>• Day 2 – Traditional + Candid Coverage</li>
+          <li>• Album with 300 Photos</li>
+          <li>• Mini Album Included</li>
+          <li>• 2 (12x18) Photo Frames</li>
+          <li>• Complimentary Calendar</li>
+        </ul>
+      </div>
+
+      <div class="bg-[#141414] rounded-3xl p-8 shadow-2xl backdrop-blur-sm border border-gold/10 card-hover">
+        <h3 class="text-3xl font-serif font-bold text-gold mb-2">Package 6</h3>
+        <p class="text-sm uppercase tracking-widest text-gray-500 mb-4">Double Event Premium</p>
+        <p class="text-4xl font-bold text-gold-dark mb-6">₹1,30,000/-</p>
+        <ul class="space-y-3 text-gray-300">
+          <li>• Full Traditional & Candid Coverage</li>
+          <li>• Drone Coverage Included</li>
+          <li>• Album with 500 Photos</li>
+          <li>• Save The Date Video</li>
+          <li>• Pre or Post Wedding Shoot</li>
+          <li>• 4 (12x18) Photo Frames + 2 Calendars</li>
+        </ul>
+      </div>
+
+      <div class="bg-[#141414] rounded-3xl p-8 shadow-2xl backdrop-blur-sm border border-gold/10 card-hover">
+        <h3 class="text-3xl font-serif font-bold text-gold mb-2">Package 7</h3>
+        <p class="text-sm uppercase tracking-widest text-gray-500 mb-4">3 Days Event</p>
+        <p class="text-4xl font-bold text-gold-dark mb-6">₹60,000/-</p>
+        <ul class="space-y-3 text-gray-300">
+          <li>• 3 Days Traditional Coverage</li>
+          <li>• Album with 200 Photos</li>
+          <li>• 2 (12x18) Photo Frames</li>
+          <li>• Complimentary Calendar</li>
+        </ul>
+      </div>
+
+      <div class="bg-gradient-to-br from-gold to-gold-dark text-white rounded-3xl p-8 shadow-2xl card-hover xl:col-span-2">
+        <h3 class="text-4xl font-serif font-bold mb-2">Package 8</h3>
+        <p class="text-sm uppercase tracking-widest text-white/80 mb-4">4 Days Luxury Event</p>
+        <p class="text-5xl font-bold mb-6">₹1,99,999/-</p>
+        <div class="grid md:grid-cols-2 gap-6">
+          <ul class="space-y-3 text-white/90">
+            <li>• Haldi Traditional Coverage</li>
+            <li>• Mehendi Traditional Coverage</li>
+            <li>• Reception / Sangeet Full Candid Coverage</li>
+            <li>• Wedding Full Candid Coverage</li>
+          </ul>
+          <ul class="space-y-3 text-white/90">
+            <li>• 2 Albums with 500 Photos Each</li>
+            <li>• 2 Mini Albums</li>
+            <li>• 4 (12x18) Photo Frames</li>
+            <li>• 2 Calendars + Free Pre/Post Wedding</li>
+          </ul>
         </div>
-      </section>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 
       <!-- CONTACT / BOOKING -->
-      <section id="contact" class="py-24 bg-white relative z-10">
+      <section id="contact" class="py-24 bg-[#141414] relative z-10">
         <div class="container mx-auto px-6">
           <div class="max-w-3xl mx-auto">
-            <h2 class="text-4xl font-bold font-serif text-center text-gold mb-4">Let's Create Magic</h2>
-            <p class="text-center text-lg text-gray-700 mb-12">Fill out the form to check availability. We'll finalize your booking via WhatsApp!</p>
+            <h2 class="text-4xl font-bold font-serif text-center text-gold mb-4">Your Forever Begins Here</h2>
+            <p class="text-center text-lg text-gray-300 mb-12">The laughter, the tears, the nervous smiles, the sacred knot — we capture every emotion exactly the way your heart felt it.</p>
 
-            <form id="contact-form" class="bg-beige p-8 md:p-12 rounded-2xl shadow-xl">
+            <form id="contact-form" class="bg-[#101010] p-8 md:p-12 rounded-2xl shadow-2xl backdrop-blur-sm">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <label for="name" class="block text-gray-700 font-bold mb-2">Full Name</label>
-                  <input id="name" name="name" type="text" class="w-full px-4 py-3 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" required />
+                  <label for="name" class="block text-gray-300 font-bold mb-2">Full Name</label>
+                  <input id="name" name="name" type="text" class="w-full px-4 py-3 bg-[#141414] rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" required />
                 </div>
                 <div>
-                  <label for="email" class="block text-gray-700 font-bold mb-2">Email Address</label>
-                  <input id="email" name="email" type="email" class="w-full px-4 py-3 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" required />
+                  <label for="email" class="block text-gray-300 font-bold mb-2">Email Address</label>
+                  <input id="email" name="email" type="email" class="w-full px-4 py-3 bg-[#141414] rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" required />
                 </div>
                 <div>
-                  <label for="phone" class="block text-gray-700 font-bold mb-2">Phone Number</label>
-                  <input id="phone" name="phone" type="tel" class="w-full px-4 py-3 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" required />
+                  <label for="phone" class="block text-gray-300 font-bold mb-2">Phone Number</label>
+                  <input id="phone" name="phone" type="tel" class="w-full px-4 py-3 bg-[#141414] rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" required />
                 </div>
                 <div>
-                  <label for="pkg1" class="block text-gray-700 font-bold mb-2">Package for Day 1</label>
-                  <select id="pkg1" name="pkg1" class="w-full px-4 py-3 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" required>
+                  <label for="pkg1" class="block text-gray-300 font-bold mb-2">Package for Day 1</label>
+                  <select id="pkg1" name="pkg1" class="w-full px-4 py-3 bg-[#141414] rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" required>
                     <option value="">Select a package...</option>
                     <option>Package 1</option>
                     <option>Package 2</option>
@@ -327,12 +735,12 @@
                   </select>
                 </div>
                 <div>
-                  <label for="date1" class="block text-gray-700 font-bold mb-2">Day 1 Event Date</label>
-                  <input id="date1" name="date1" type="date" class="w-full px-4 py-3 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" required />
+                  <label for="date1" class="block text-gray-300 font-bold mb-2">Day 1 Event Date</label>
+                  <input id="date1" name="date1" type="date" class="w-full px-4 py-3 bg-[#141414] rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" required />
                 </div>
                 <div>
-                  <label for="pkg2" class="block text-gray-700 font-bold mb-2">Package for Day 2 (optional)</label>
-                  <select id="pkg2" name="pkg2" class="w-full px-4 py-3 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold">
+                  <label for="pkg2" class="block text-gray-300 font-bold mb-2">Package for Day 2 (optional)</label>
+                  <select id="pkg2" name="pkg2" class="w-full px-4 py-3 bg-[#141414] rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold">
                     <option value="">None</option>
                     <option>Package 1</option>
                     <option>Package 2</option>
@@ -341,13 +749,13 @@
                   </select>
                 </div>
                 <div>
-                  <label for="date2" class="block text-gray-700 font-bold mb-2">Day 2 Event Date</label>
-                  <input id="date2" name="date2" type="date" class="w-full px-4 py-3 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" />
+                  <label for="date2" class="block text-gray-300 font-bold mb-2">Day 2 Event Date</label>
+                  <input id="date2" name="date2" type="date" class="w-full px-4 py-3 bg-[#141414] rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" />
                 </div>
               </div>
               <div class="mb-6">
-                <label for="message" class="block text-gray-700 font-bold mb-2">Tell us about your event</label>
-                <textarea id="message" name="message" rows="6" class="w-full px-4 py-3 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" placeholder="Please share details like your venue, guest count, etc."></textarea>
+                <label for="message" class="block text-gray-300 font-bold mb-2">Tell us about your event</label>
+                <textarea id="message" name="message" rows="6" class="w-full px-4 py-3 bg-[#141414] rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gold" placeholder="Please share details like your venue, guest count, etc."></textarea>
               </div>
               <div class="text-center">
                 <button type="submit" class="bg-gold text-white font-bold py-3 px-10 rounded-lg text-lg shadow-lg hover:bg-gold-dark transition">Prepare Inquiry</button>
@@ -356,7 +764,58 @@
           </div>
         </div>
       </section>
-    </main>
+    
+
+<!-- TESTIMONIAL VIDEOS -->
+<section class="py-24 bg-[#101010] relative z-10">
+  <div class="container mx-auto px-6">
+    <h2 class="text-4xl font-bold font-serif text-center text-gold mb-4">Love Stories We Preserved Forever</h2>
+    <p class="text-center text-gray-400 mb-12">
+      Real wedding memories from our happy couples.
+    </p>
+
+    <div class="max-w-4xl mx-auto">
+      <video id="client-love-video"
+        class="w-full rounded-3xl shadow-2xl"
+        controls
+        autoplay
+        muted
+        playsinline>
+      </video>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="py-20 bg-[#141414] relative z-10">
+  <div class="container mx-auto px-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+
+      <div class="bg-[#101010] rounded-3xl p-8 shadow-lg">
+        <h3 class="text-5xl font-bold text-gold mb-2">100+</h3>
+        <p class="text-gray-300">Events Covered</p>
+      </div>
+
+      <div class="bg-[#101010] rounded-3xl p-8 shadow-lg">
+        <h3 class="text-5xl font-bold text-gold mb-2">3+</h3>
+        <p class="text-gray-300">Years Experience</p>
+      </div>
+
+      <div class="bg-[#101010] rounded-3xl p-8 shadow-lg">
+        <h3 class="text-5xl font-bold text-gold mb-2">100%</h3>
+        <p class="text-gray-300">Client Satisfaction</p>
+      </div>
+
+      <div class="bg-[#101010] rounded-3xl p-8 shadow-lg">
+        <h3 class="text-5xl font-bold text-gold mb-2">4K</h3>
+        <p class="text-gray-300">Cinematic Quality</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</main>
   </div>
 
   <!-- Footer -->
@@ -378,11 +837,11 @@
 
   <!-- WhatsApp Modal -->
   <div id="whatsapp-modal" class="modal hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4 opacity-0 invisible">
-    <div class="modal-content bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center transform scale-95">
+    <div class="modal-content bg-[#141414] p-8 rounded-2xl shadow-2xl backdrop-blur-sm max-w-md w-full text-center transform scale-95">
       <h3 id="modal-title" class="text-2xl font-bold font-serif mb-4">Title</h3>
-      <p id="modal-message" class="text-gray-700 mb-6">Message</p>
+      <p id="modal-message" class="text-gray-300 mb-6">Message</p>
       <div id="modal-buttons" class="space-y-4"></div>
-      <button id="modal-close" class="mt-6 text-gray-500 hover:text-gray-700 text-sm">Close</button>
+      <button id="modal-close" class="mt-6 text-gray-500 hover:text-gray-300 text-sm">Close</button>
     </div>
   </div>
 
@@ -535,76 +994,71 @@
         }, 3000); // 3s interval
       }
 
-      // GALLERY: fill grid with 12 random images, refresh periodically
-      const galleryGrid = document.getElementById('gallery-grid');
-      async function refreshGalleryFromDrive() {
-        const urls = await loadDriveImageUrls();
-        if (!urls.length) {
-          galleryGrid.innerHTML = `
-            <div class='col-span-full text-center text-sm text-gray-500'>
-              No images detected. Make sure the Drive folder is public and contains images. 
-            </div>`;
-          return;
-        }
-        const want = 12;
-        const show = pickRandom(urls, want);
-        // if grid empty, initial render
-        if (!galleryGrid.children.length) {
-          galleryGrid.innerHTML = show.map(url => `
-            <div class="gallery-item rounded-lg shadow-lg overflow-hidden cursor-pointer">
-              <img loading="lazy" src="${url}" alt="Gallery" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" />
-            </div>
-          `).join('');
-          bindLightbox();
-          return;
-        }
-        // Smooth crossfade swap for each tile
-        const imgs = galleryGrid.querySelectorAll('.gallery-item img');
-        imgs.forEach((oldImg, i) => {
-          const newUrl = show[i % show.length];
-          if (!newUrl || newUrl === oldImg.src) return;
-          const wrapper = oldImg.parentElement;
-          const next = new Image();
-          next.className = 'fade-new w-full h-full object-cover transition-transform duration-300 hover:scale-105';
-          next.alt = 'Gallery';
-          next.onload = () => {
-            wrapper.appendChild(next);
-            // force reflow then fade
-            void next.offsetWidth;
-            next.classList.add('show');
-            setTimeout(() => {
-              oldImg.remove();
-              next.classList.remove('fade-new');
-            }, 650);
-          };
-          next.src = newUrl;
+      
+// ===== PORTFOLIO CAROUSEL =====
+
+const portfolioCarousel = document.getElementById('portfolio-carousel');
+
+async function renderCarousel() {
+  const urls = await loadDriveImageUrls();
+
+  if (!urls.length) return;
+
+  portfolioCarousel.innerHTML = urls.map((url, index) => `
+    <div class="carousel-card group">
+      <img src="${url}" alt="Wedding Portfolio ${index + 1}" loading="lazy" />
+      <div class="carousel-overlay"></div>
+      </div>
+  `).join('');
+}
+
+renderCarousel();
+
+// Carousel controls
+const nextBtn = document.getElementById('carousel-next');
+const prevBtn = document.getElementById('carousel-prev');
+
+if(nextBtn){
+  nextBtn.addEventListener('click', () => {
+    portfolioCarousel.scrollBy({
+      left: 420,
+      behavior: 'smooth'
+    });
+  });
+}
+
+if(prevBtn){
+  prevBtn.addEventListener('click', () => {
+    portfolioCarousel.scrollBy({
+      left: -420,
+      behavior: 'smooth'
+    });
+  });
+}
+
+// Auto-scroll carousel
+setInterval(() => {
+  if(portfolioCarousel){
+    portfolioCarousel.scrollBy({
+      left: 420,
+      behavior: 'smooth'
+    });
+
+    // Loop back
+    if (
+      portfolioCarousel.scrollLeft + portfolioCarousel.clientWidth >=
+      portfolioCarousel.scrollWidth - 20
+    ) {
+      setTimeout(() => {
+        portfolioCarousel.scrollTo({
+          left: 0,
+          behavior: 'smooth'
         });
-      }
-
-      // Utils
-      function pickRandom(arr, n) { return shuffle(arr).slice(0, Math.min(n, arr.length)); }
-      function shuffle(arr) { return arr.slice().sort(() => Math.random() - 0.5); }
-
-      // Lightbox binding (for dynamic items)
-      const lightbox = document.getElementById('lightbox');
-      const lightboxImg = document.getElementById('lightbox-img');
-      const lightboxClose = document.getElementById('lightbox-close');
-      function bindLightbox() {
-        document.querySelectorAll('#gallery-grid .gallery-item img').forEach(img => {
-          img.addEventListener('click', () => { lightboxImg.src = img.src; lightbox.classList.remove('hidden'); });
-        });
-      }
-      const closeLightbox = () => { lightbox.classList.add('hidden'); lightboxImg.src = ''; };
-      lightboxClose.addEventListener('click', closeLightbox);
-      lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
-
-      // Kick off initial loads
-      refreshHeroFromDrive().then(startHeroRotation);
-      refreshGalleryFromDrive();
-
-      // Periodic refreshes
-      setInterval(refreshHeroFromDrive, 60000); // re-pick hero images every 60s
-      setInterval(refreshGalleryFromDrive, 30000); // refresh gallery every 30s
+      }, 1500);
+    }
+  }
+}, 4000);
+ // refresh gallery every 30s
 
       // Contact form → WhatsApp
       const contactForm = document.getElementById('contact-form');
@@ -652,6 +1106,152 @@
       })();
       // ------- END TESTS -------
     });
-  </script>
+  
+// ===== CLIENT LOVE VIDEO ROTATION =====
+
+const VIDEO_FOLDER_ID = '13e8gS5N2q8xJ2JirPHUrpevXRD3zT4wK';
+
+async function loadDriveVideos() {
+  try {
+    const proxy = `https://r.jina.ai/http://drive.google.com/embeddedfolderview?id=${VIDEO_FOLDER_ID}`;
+    const res = await fetch(proxy);
+    const html = await res.text();
+
+    const ids = [...html.matchAll(/[-\w]{25,}/g)]
+      .map(m => m[0])
+      .filter(id => id.length > 20);
+
+    const uniqueIds = [...new Set(ids)];
+
+    return uniqueIds.map(id =>
+      `https://drive.google.com/uc?export=download&id=${id}`
+    );
+  } catch (e) {
+    console.log('Video load failed', e);
+    return [];
+  }
+}
+
+(async function setupClientLoveVideos(){
+  const player = document.getElementById('client-love-video');
+  if(!player) return;
+
+  const videos = await loadDriveVideos();
+
+  if(!videos.length) return;
+
+  let current = 0;
+
+  function playVideo(index){
+    player.src = videos[index];
+    player.play().catch(()=>{});
+  }
+
+  playVideo(current);
+
+  player.addEventListener('ended', () => {
+    current = (current + 1) % videos.length;
+    playVideo(current);
+  });
+})();
+
+
+// ===== PREMIUM CLIENT LOVE VIDEO PLAYER =====
+
+const CLIENT_VIDEOS = [
+  "https://drive.google.com/uc?export=download&id=13e8gS5N2q8xJ2JirPHUrpevXRD3zT4wK"
+];
+
+async function setupPremiumVideoPlayer() {
+  const player = document.getElementById('client-love-video');
+  if (!player) return;
+
+  // Folder scraping
+  const folderId = "13e8gS5N2q8xJ2JirPHUrpevXRD3zT4wK";
+
+  async function getVideos() {
+    try {
+      const response = await fetch(`https://r.jina.ai/http://drive.google.com/embeddedfolderview?id=${folderId}`);
+      const text = await response.text();
+
+      const ids = [...text.matchAll(/[a-zA-Z0-9_-]{25,}/g)]
+        .map(m => m[0]);
+
+      const unique = [...new Set(ids)].slice(0, 20);
+
+      return unique.map(id =>
+        `https://drive.google.com/uc?export=download&id=${id}`
+      );
+
+    } catch (e) {
+      console.log(e);
+      return [];
+    }
+  }
+
+  const videos = await getVideos();
+
+  if (!videos.length) return;
+
+  let current = 0;
+
+  function play(index) {
+    player.src = videos[index];
+    player.load();
+
+    const playPromise = player.play();
+
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {});
+    }
+  }
+
+  play(current);
+
+  player.addEventListener('ended', () => {
+    current = (current + 1) % videos.length;
+    play(current);
+  });
+}
+
+setupPremiumVideoPlayer();
+
+
+
+
+
+
+
+
+
+</script>
+
+<script>
+
+
+
 </body>
 </html>
+
+<style>
+.card-hover,
+form,
+.carousel-card,
+.bg-[#141414] {
+  backdrop-filter: blur(14px);
+}
+
+section {
+  position: relative;
+  overflow: hidden;
+}
+
+h1,h2,h3,h4 {
+  letter-spacing: 0.5px;
+}
+
+button,
+a {
+  transition: all .35s ease;
+}
+</style>
