@@ -508,9 +508,9 @@ Reserve Your Date
                 <p class="text-gray-400 text-sm">Capturing elegant emotions and aesthetic candid moments with creative vision.</p>
               </div>
               <div class="relative bg-[#101010] p-6 rounded-2xl shadow-2xl backdrop-blur-sm card-hover" data-editable data-key="team-ashik">
-                <img src="https://drive.google.com/thumbnail?id=1LtQS_MCB1PRx-jFNqo8U6FdEAJwpaz7R&sz=w2000" alt="Ashik" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover" />
+                <img src="https://via.placeholder.com/400x400.png?text=Ashik+Photo" alt="Ashik" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover" />
                 <h4 class="text-xl font-bold font-serif mb-1">Ashik</h4>
-                <p class="text-gold font-semibold mb-2">Content Creator & Video Editor</p>
+                <p class="text-gold font-semibold mb-2">Cinematic Videographer & Editor</p>
                 <p class="text-gray-400 text-sm">Focused on cinematic storytelling and emotional wedding films.</p>
               </div>
               <div class="relative bg-[#101010] p-6 rounded-2xl shadow-2xl backdrop-blur-sm card-hover" data-editable data-key="team-mohan">
@@ -569,7 +569,42 @@ Reserve Your Date
 </section>
 
 
+<!-- MODEL PHOTOSHOOT SECTION -->
+<section id="modelshoot" class="py-24 bg-[#141414] relative z-10 overflow-hidden">
+  <div class="container mx-auto px-6">
 
+    <div class="text-center mb-14">
+      <h2 class="text-5xl font-bold font-serif text-gold mb-4">
+        Editorial & Model Stories
+      </h2>
+
+      <p class="text-lg text-gray-400 max-w-3xl mx-auto">
+        Elegance. Fashion. Emotion. Every frame crafted with cinematic storytelling and artistic vision.
+      </p>
+    </div>
+
+    
+
+<div class="relative">
+
+  <div id="model-carousel"
+    class="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 no-scrollbar">
+  </div>
+
+  <button id="model-prev"
+    class="absolute left-0 top-1/2 -translate-y-1/2 bg-[#141414]/90 p-4 rounded-full shadow-xl z-20">
+    ❮
+  </button>
+
+  <button id="model-next"
+    class="absolute right-0 top-1/2 -translate-y-1/2 bg-[#141414]/90 p-4 rounded-full shadow-xl z-20">
+    ❯
+  </button>
+
+</div>
+
+
+</section>
 
 
       <!-- PACKAGES -->
@@ -1228,7 +1263,149 @@ setupPremiumVideoPlayer();
 
 <script>
 
+// ===== LIVE DRIVE MODEL CAROUSEL =====
 
+const MODEL_FOLDER = '1mcNz_Sy51sf22JdHe8AbjPu4Eydc8MsV';
+
+async function fetchDriveImages(){
+
+  try{
+
+    const proxy =
+      `https://r.jina.ai/http://drive.google.com/embeddedfolderview?id=${MODEL_FOLDER}#grid`;
+
+    const response = await fetch(proxy);
+
+    const text = await response.text();
+
+    const ids = new Set();
+
+    // extract thumbnail ids
+    [...text.matchAll(/thumbnail\?id=([A-Za-z0-9_-]+)/g)]
+      .forEach(m => ids.add(m[1]));
+
+    // extract /file/d/
+    [...text.matchAll(/\/file\/d\/([A-Za-z0-9_-]{20,})/g)]
+      .forEach(m => ids.add(m[1]));
+
+    return [...ids].map(id =>
+      `https://drive.google.com/thumbnail?id=${id}&sz=w2000`
+    );
+
+  }catch(err){
+
+    console.log(err);
+
+    return [];
+  }
+}
+
+async function renderModelCarousel(){
+
+  const carousel =
+    document.getElementById('model-carousel');
+
+  if(!carousel) return;
+
+  carousel.innerHTML = `
+    <div class="w-full py-20 text-center text-gray-400">
+      Loading model photos...
+    </div>
+  `;
+
+  const images = await fetchDriveImages();
+
+  if(!images.length){
+
+    carousel.innerHTML = `
+      <div class="w-full py-20 text-center text-red-400">
+        Unable to load model photos.
+      </div>
+    `;
+
+    return;
+  }
+
+  carousel.innerHTML = images.map(img => `
+    <div class="carousel-card">
+      <img
+        src="${img}"
+        loading="lazy"
+        alt="Model Shoot"
+        class="w-full h-full object-cover"
+      />
+    </div>
+  `).join('');
+
+  // autoplay
+  setInterval(() => {
+
+    carousel.scrollBy({
+      left: 420,
+      behavior: 'smooth'
+    });
+
+    if(
+      carousel.scrollLeft + carousel.clientWidth >=
+      carousel.scrollWidth - 20
+    ){
+
+      setTimeout(() => {
+
+        carousel.scrollTo({
+          left: 0,
+          behavior: 'smooth'
+        });
+
+      }, 1000);
+
+    }
+
+  }, 3500);
+}
+
+window.addEventListener('load', () => {
+
+  renderModelCarousel();
+
+  const carousel =
+    document.getElementById('model-carousel');
+
+  const next =
+    document.getElementById('model-next');
+
+  const prev =
+    document.getElementById('model-prev');
+
+  if(next){
+
+    next.onclick = () => {
+
+      carousel.scrollBy({
+        left: 420,
+        behavior: 'smooth'
+      });
+
+    };
+
+  }
+
+  if(prev){
+
+    prev.onclick = () => {
+
+      carousel.scrollBy({
+        left: -420,
+        behavior: 'smooth'
+      });
+
+    };
+
+  }
+
+});
+
+</script>
 
 </body>
 </html>
